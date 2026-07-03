@@ -101,7 +101,7 @@ Każdy układ fizyczny w projekcie definiowany jest za pomocą pliku tekstowego 
 
 ---
 
-## 🧹 Czyszczenie projektu
+## Czyszczenie projektu
 
 Aby usunąć skompilowane pliki binarne solvera (`solver.so`) i przywrócić katalog do czystego stanu przed ponowną kompilacją, wykonaj:
 ```bash

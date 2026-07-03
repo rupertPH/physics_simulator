@@ -112,7 +112,7 @@ make run CONFIG=config/my_system.ini
 ```
 ---
 
-## 🧹 Cleaning the Project
+## Cleaning the Project
 
 To delete the compiled solver binary files (`solver.so`) and restore the directory to a clean state before recompiling, run:
 ```bash
