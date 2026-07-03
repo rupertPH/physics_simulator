@@ -1,0 +1,120 @@
+# Physical Systems Simulator
+
+The project provides an automated environment for compiling a numerical solver (written in C) and running dynamic simulations (written in Python) for various physical systems. Calculations are performed using an efficient 4th-order Runge-Kutta (RK4) algorithm.
+
+---
+
+## System Requirements
+
+Before running the project, ensure that your system has the following installed:
+*   **GNU Make**
+*   **GCC Compiler** (with support for `-shared` and `-fPIC` flags)
+*   **Python 3** along with the `pip` package manager
+
+---
+
+## Quick Start
+
+### 1. Environment Verification
+Run a full compatibility test to check for the presence of Python, the GCC compiler, and the required libraries:
+```bash
+make check
+```
+*(You can also check individual components separately using the following commands: `make check_python`, `make check_gcc`, or `make check_dependencies`)*
+
+### 2. Install Python Dependencies
+If the dependency check shows missing packages, install the required libraries with this command:
+```bash
+make install_dependencies
+```
+
+### 3. Compile the Dynamic Solver
+The computational core of the project is a fast solver written in C. Compile it into a shared library (`.so`):
+```bash
+make compile_solver
+```
+
+### 4. Run the Default Simulation
+After a successful compilation, run the simulation with the default configuration file (double pendulum):
+```bash
+make run
+```
+
+---
+
+## Advanced Configuration Management
+
+The program allows you to simulate different physical systems. You can choose a configuration file in **two ways**:
+
+### Method 1: Passing a Parameter in the Console (Recommended)
+You do not need to edit the source code. You can specify any `.ini` file directly when calling the `make run` command by overwriting the `CONFIG` variable:
+
+```bash
+# Running a simulation of a multiple spring-mass system
+make run CONFIG=config/config_multiple_spring_masses.ini
+
+# Running a simulation of a single pendulum
+make run CONFIG=config/config_pendulum.ini
+```
+
+### Method 2: Editing the Makefile
+Open the `Makefile` in a text editor and change the active `CONFIG` variable by uncommenting the desired line and commenting out the others with `#` signs:
+
+```makefile
+# Example of a change in the Makefile:
+# CONFIG=config/config_double_pendulum.ini
+CONFIG=config/config_multiple_spring_masses.ini
+```
+
+### Available Configuration Templates:
+*   `config_double_pendulum.ini` – Double pendulum (default)
+*   `config_pendulum.ini` – Single pendulum
+*   `config_spring_mass.ini` – Single spring-mass system
+*   `config_multiple_spring_masses.ini` – Three-mass system connected by springs
+
+---
+
+# Custom Configuration File (*.ini) Creation
+
+Each physical system in the project is defined using a text file with the `*.ini` extension. This file must maintain a strict structure divided into sections:
+
+### 1. `[VARIABLES]`
+* `number_q` – the number of degrees of freedom of the system (the number of variables describing the motion, e.g., `2` for a double pendulum, `3` for three blocks).
+
+### 2. `[PARAMETERS]`
+* Section for physical constants of the system: masses (`m1, m2...`), spring constants (`k1, k2...`), lengths (`l1, d1...`), and gravitational acceleration (`g`).
+
+### 3. `[INITIAL STATE]`
+* `q_start` – initial positions/angles for each variable, separated by commas.
+* `qd_start` – initial velocities (time derivatives of positions) for each variable, separated by commas.
+
+### 4. `[LAGRANGIAN]`
+* `L` – the Lagrangian function of the system ($L = T - V$, where $T$ is the kinetic energy and $V$ is the potential energy). 
+* **Syntax rules**: Use standard mathematical operators (`*`, `/`, `**` for exponentiation) and trigonometric functions like `sin(...)` and `cos(...)`. Write velocity variables as `qd1, qd2` and position variables as `q1, q2`.
+
+### 5. `[2D VISUALIZATION]`
+* Mapping definitions of generalized coordinates to real screen points ($X, Y$) for each element (e.g., `X1, Y1`, `X2, Y2`), used to draw the animation.
+
+### 6. `[RENDER]`
+* `scale` – pixel multiplier (scaling mathematical distances to the screen).
+* `origin_x`, `origin_y` – anchor point of the system (center of the screen/coordinate system) in pixels.
+
+---
+
+## Quick Start Example
+
+1. Create a new file: `config/my_system.ini`
+2. Fill the file with the schema above.
+3. Run the system using the following command:
+
+```bash
+make run CONFIG=config/my_system.ini
+```
+---
+
+## 🧹 Cleaning the Project
+
+To delete the compiled solver binary files (`solver.so`) and restore the directory to a clean state before recompiling, run:
+```bash
+make clean
+```
